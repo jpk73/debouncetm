@@ -15,7 +15,7 @@ Button Button1(button_pin1, samplerate, longpress_duration);
 Button Button2(button_pin2, samplerate, longpress_duration);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
@@ -25,7 +25,7 @@ void loop() {
   if (Button1.released()) Serial.println("Button1 released");
 
   Button2.update();
-  if (Button2.pressed()) Serial.println("Button2 pressed");               // needs reset by released()!
+  if (Button2.pressed()) Serial.println("Button2 pressed");               // needs reset by released()
   if (Button2.longpressed(once)) Serial.println("Button2 longpressed");   // only one longpress will be detected
   if (Button2.released()) Serial.println("Button2 released");
 }
