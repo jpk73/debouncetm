@@ -10,10 +10,9 @@ class Button {
   public:
     Button(uint8_t _button_pin, uint8_t _samplerate, uint16_t _longpress_duration);
     void update();
-    uint8_t pressed();
-    uint8_t released();
-    uint8_t longOnce();
-    uint8_t longRepeat();
+    bool pressed();
+    bool released();
+    bool longpressed(bool repeat);
 
   protected:
     uint8_t inline read();
@@ -29,5 +28,3 @@ class Button {
 };
 
 #endif
-
-
