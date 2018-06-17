@@ -34,8 +34,8 @@ uint8_t inline Button::read() {
   return state;
 }
 
-uint8_t Button::pressed() {
-  uint8_t press = 0;
+bool Button::pressed() {
+  bool press = 0;
   if ((history & 0b11000111) == 0b11000000) {
     press = 1;
     lpress_flag = 1;
@@ -44,8 +44,8 @@ uint8_t Button::pressed() {
   return press;
 }
 
-uint8_t Button::released() {
-  uint8_t release = 0;
+bool Button::released() {
+  bool release = 0;
   if ((history & 0b11000111) == 0b00000111) {
     release = 1;
     lpress_flag = 0;
@@ -54,23 +54,13 @@ uint8_t Button::released() {
   return release;
 }
 
-uint8_t Button::longOnce() {
-  uint8_t lpress = 0;
-  if (lpress_flag == 1 && now - timestamp_lpress >= longpress_duration) {
-    lpress_flag = 0;
-    lpress = 1;
-  }
-  if (lpress_flag == 0) timestamp_lpress = now;
-  return lpress;
-}
-
-uint8_t Button::longRepeat() {
-  uint8_t lpress = 0;
+bool Button::longpressed(bool repeat) {
+  bool lpress = 0;
   if (lpress_flag == 0) timestamp_lpress = now;
   else if (now - timestamp_lpress >= longpress_duration) {
     lpress = 1;
+    lpress_flag = repeat;
     timestamp_lpress = now;
   }
   return lpress;
 }
-
