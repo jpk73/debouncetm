@@ -64,3 +64,21 @@ bool Button::longpressed(bool repeat) {
   }
   return lpress;
 }
+
+bool Button::isHigh() {
+  bool high = 0;
+  if ((history & 0b11000111) == 0b11000111) {
+    high = 1;
+    history = 0b11111111;
+  }
+  return high;
+}
+
+bool Button::isLow() {
+  bool low = 0;
+  if ((history & 0b11000111) == 0b00000000) {
+    low = 1;
+    history = 0b00000000;
+  }
+  return low;
+}
