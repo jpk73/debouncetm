@@ -13,6 +13,8 @@ class Button {
     bool pressed();
     bool released();
     bool longpressed(bool repeat);
+    bool isHigh();
+    bool isLow();
 
   protected:
     uint8_t inline read();
