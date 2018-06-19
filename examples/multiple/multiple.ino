@@ -23,9 +23,13 @@ void loop() {
   if (Button1.pressed()) Serial.println("Button1 pressed");               // needs reset by released()
   if (Button1.longpressed(repeat)) Serial.println("Button1 longpressed"); // repeated return of longpress
   if (Button1.released()) Serial.println("Button1 released");
+//if (Button1.isHigh()) Serial.println("Button1 HIGH");
+//if (Button1.isLow()) Serial.println("Button1 LOW");
 
   Button2.update();
   if (Button2.pressed()) Serial.println("Button2 pressed");               // needs reset by released()
   if (Button2.longpressed(once)) Serial.println("Button2 longpressed");   // only one longpress will be detected
   if (Button2.released()) Serial.println("Button2 released");
+//if (Button2.isHigh()) Serial.println("Button2 HIGH");
+//if (Button2.isLow()) Serial.println("Button2 LOW");
 }
