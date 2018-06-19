@@ -18,18 +18,25 @@ void setup() {
   Serial.begin(115200);
 }
 
+unsigned long previousMillis = millis();
+
 void loop() {
   Button1.update();
   if (Button1.pressed()) Serial.println("Button1 pressed");               // needs reset by released()
   if (Button1.longpressed(repeat)) Serial.println("Button1 longpressed"); // repeated return of longpress
   if (Button1.released()) Serial.println("Button1 released");
-//if (Button1.isHigh()) Serial.println("Button1 HIGH");
-//if (Button1.isLow()) Serial.println("Button1 LOW");
 
   Button2.update();
   if (Button2.pressed()) Serial.println("Button2 pressed");               // needs reset by released()
   if (Button2.longpressed(once)) Serial.println("Button2 longpressed");   // only one longpress will be detected
   if (Button2.released()) Serial.println("Button2 released");
-//if (Button2.isHigh()) Serial.println("Button2 HIGH");
-//if (Button2.isLow()) Serial.println("Button2 LOW");
+
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= 1000) {                           // check every second:
+    previousMillis = currentMillis;
+    if (Button1.isHigh()) Serial.println("Button1 HIGH");
+    if (Button1.isLow()) Serial.println("Button1 LOW");
+    if (Button2.isHigh()) Serial.println("Button2 HIGH");
+    if (Button2.isLow()) Serial.println("Button2 LOW");
+  }
 }
