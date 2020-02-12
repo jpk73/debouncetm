@@ -1,78 +1,88 @@
 
-// https://hackaday.com/2015/12/10/embed-with-elliot-debounce-your-noisy-buttons-part-ii/
+// inspired by https://hackaday.com/2015/12/10/embed-with-elliot-debounce-your-noisy-buttons-part-ii/
 
 #include "Arduino.h"
 #include "debouncetm.h"
 
-Button::Button(uint8_t _button_pin, uint8_t _samplerate, uint16_t _longpress_duration) {
+Button::Button(uint8_t _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration) {
+  polarity = _polarity;
   button_pin = _button_pin;
-  samplerate = _samplerate;
-  longpress_duration = _longpress_duration;
-  history = 0b11111111;
-  now = millis();
-  timestamp = now;
-  timestamp_lpress = now;
-  lpress_flag = 0;
-  pinMode(button_pin, INPUT_PULLUP);
+  samplerate = _samplerate * 1000;
+  longpress_duration = _longpress_duration * 1000000;
+  history = 0b11111111111111111111111111111111;
+  pressed_flag = 0;
+  stopwatch = 0;
+  stopwatch_pressed = 0;
+  pinMode(button_pin, _pin_mode);
 }
 
 void Button::update() {
-  now = millis();
-  if (now - timestamp >= samplerate) {
-    timestamp = now;
-    history = (history & 0b10000000) | ((history & 0b00111111) << 1) | read();
+  if (stopwatch >= samplerate) {
+    stopwatch = 0;
+    history = (history & 0b10000000000000000000000000000000) | ((history & 0b00111111111111111111111111111111) << 1) | read();
+    // for (int j = 31; j >= 0; j--) {Serial.print(bitRead(history, j));} Serial.println();
   }
 }
 
-uint8_t inline Button::read() {
-  uint8_t state = 0;
+uint32_t inline Button::read() {
+  uint32_t state = 0;
 #if defined (__arm__) && defined (CORE_TEENSY) // digitalReadFast on teensy
   state = digitalReadFast(button_pin);
 #else
   state = digitalRead(button_pin);
 #endif
-  return state;
+  return state^polarity;
 }
 
 bool Button::pressed() {
   bool press = 0;
-  if ((history & 0b11000111) == 0b11000000) {
+  if ((history & 0b11111111110000000000011111111111) == 0b11111111110000000000000000000000) {
     press = 1;
-    lpress_flag = 1;
-    history = 0b00000000;
+    pressed_flag = 1;
+    history = 0b00000000000000000000000000000000;
   }
   return press;
 }
 
 bool Button::released() {
   bool release = 0;
-  if ((history & 0b11000111) == 0b00000111) {
+  if ((history & 0b11111111110000000000011111111111) == 0b00000000000000000000011111111111) {
     release = 1;
-    lpress_flag = 0;
-    history = 0b11111111;
+    if (pressed_flag == 1) clicked_flag = 1;
+    pressed_flag = 0;
+    history = 0b11111111111111111111111111111111;
   }
   return release;
 }
 
-bool Button::longpressed(bool repeat) {
-  bool lpress = 0;
-  if (lpress_flag == 0) timestamp_lpress = now;
-  else if (now - timestamp_lpress >= longpress_duration) {
-    lpress = 1;
-    lpress_flag = repeat;
-    timestamp_lpress = now;
+bool Button::longpressed() {
+  bool pressed = 0;
+  if (pressed_flag == 0) stopwatch_pressed = 0;
+  else if (stopwatch_pressed >= longpress_duration) {
+    pressed = 1;
+    pressed_flag = 0;
+    stopwatch_pressed = 0;
   }
-  return lpress;
+  return pressed;
+}
+
+bool Button::clicked() {
+  bool clicked = 0;
+  if (stopwatch_pressed < longpress_duration) {
+    clicked = clicked_flag;
+    clicked_flag = 0;
+  }
+  return clicked;
 }
 
 bool Button::isHigh() {
   bool high = 0;
-  if ((history & 0b11000111) == 0b11000111) high = 1;
+  if ((history & 0b11111111110000000000011111111111) == 0b11111111110000000000011111111111) high = 1;
   return high;
 }
 
 bool Button::isLow() {
   bool low = 0;
-  if ((history & 0b11000111) == 0b00000000) low = 1;
+  if ((history & 0b11111111110000000000011111111111) == 0b00000000000000000000000000000000) low = 1;
   return low;
 }
