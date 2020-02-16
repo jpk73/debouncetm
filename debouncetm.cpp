@@ -3,7 +3,6 @@
 
 #include "Arduino.h"
 #include "debouncetm.h"
-#include "elapsedMillis.h"
 
 Button::Button(uint8_t _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration) {
   polarity = _polarity;
