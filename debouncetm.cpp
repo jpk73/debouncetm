@@ -4,15 +4,18 @@
 #include "Arduino.h"
 #include "debouncetm.h"
 
-Button::Button(uint8_t _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration) {
+Button::Button(uint8_t _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window) {
   polarity = _polarity;
   button_pin = _button_pin;
   samplerate = _samplerate * 1000;
   longpress_duration = _longpress_duration * 1000000;
+  doubleclick_window = _doubleclick_window * 1000;
   history = 0b11111111111111111111111111111111;
   pressed_flag = 0;
+  counter = 0;
   stopwatch = 0;
   stopwatch_pressed = 0;
+  stopwatch_doubleclicked = 0;
   pinMode(button_pin, _pin_mode);
 }
 
@@ -31,7 +34,7 @@ uint32_t inline Button::read() {
 #else
   state = digitalRead(button_pin);
 #endif
-  return state^polarity;
+  return state ^ polarity;
 }
 
 bool Button::pressed() {
@@ -71,8 +74,17 @@ bool Button::clicked() {
   if (stopwatch_pressed < longpress_duration) {
     clicked = clicked_flag;
     clicked_flag = 0;
+    if (clicked == 1) counter++;
   }
   return clicked;
+}
+
+bool Button::doubleclicked() {
+  bool doubleclicked = 0;
+  if (counter == 0) {stopwatch_doubleclicked = 0;}
+  else if (stopwatch_doubleclicked > doubleclick_window) {counter = 0; stopwatch_doubleclicked = 0;}
+  else if (counter == 2) {doubleclicked = 1; counter = 0; stopwatch_doubleclicked = 0;}
+  return doubleclicked;
 }
 
 bool Button::isHigh() {
