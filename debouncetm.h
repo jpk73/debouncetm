@@ -32,8 +32,10 @@ class Button {
     elapsedMicros stopwatch;
     elapsedMicros stopwatch_pressed;
     elapsedMillis stopwatch_doubleclicked;
+    bool state_flag;
     bool pressed_flag;
     bool clicked_flag;
+    bool doubleclick_flag;
 };
 
 #endif
