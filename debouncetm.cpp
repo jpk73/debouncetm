@@ -25,7 +25,6 @@ void Button::update() {
   if (stopwatch >= samplerate) {
     stopwatch = 0;
     history = (history & 0b10000000000000000000000000000000) | ((history & 0b00111111111111111111111111111111) << 1) | read();
-    // for (int j = 31; j >= 0; j--) {Serial.print(bitRead(history, j));} Serial.println();
   }
 }
 
