@@ -12,6 +12,8 @@ Button::Button(uint8_t _button_pin, byte _pin_mode, bool _polarity, float _sampl
   doubleclick_window = _doubleclick_window * 1000;
   history = 0b11111111111111111111111111111111;
   pressed_flag = 0;
+  state_flag = 1;
+  doubleclick_flag = 0;
   counter = 0;
   stopwatch = 0;
   stopwatch_pressed = 0;
@@ -39,9 +41,10 @@ uint32_t inline Button::read() {
 
 bool Button::pressed() {
   bool press = 0;
-  if ((history & 0b11111111110000000000011111111111) == 0b11111111110000000000000000000000) {
+  if ((history & 0b11111111110000000000011111111111) == 0b11111111110000000000000000000000 || (state_flag && isLow())) {
     press = 1;
     pressed_flag = 1;
+    state_flag = 0;
     history = 0b00000000000000000000000000000000;
   }
   return press;
@@ -49,10 +52,11 @@ bool Button::pressed() {
 
 bool Button::released() {
   bool release = 0;
-  if ((history & 0b11111111110000000000011111111111) == 0b00000000000000000000011111111111) {
+  if ((history & 0b11111111110000000000011111111111) == 0b00000000000000000000011111111111 || (!state_flag && isHigh())) {
     release = 1;
     if (pressed_flag == 1) clicked_flag = 1;
     pressed_flag = 0;
+    state_flag = 1;
     history = 0b11111111111111111111111111111111;
   }
   return release;
@@ -74,12 +78,16 @@ bool Button::clicked() {
   if (stopwatch_pressed < longpress_duration) {
     clicked = clicked_flag;
     clicked_flag = 0;
-    if (clicked == 1) counter++;
+    if (doubleclick_flag && clicked) {
+      counter++;
+      if (counter == 2) clicked = 0;
+    }
   }
   return clicked;
 }
 
 bool Button::doubleclicked() {
+  if (!doubleclick_flag) doubleclick_flag = 1;
   bool doubleclicked = 0;
   if (counter == 0) {stopwatch_doubleclicked = 0;}
   else if (stopwatch_doubleclicked > doubleclick_window) {counter = 0; stopwatch_doubleclicked = 0;}
