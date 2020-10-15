@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "debouncetm.h"
 
-Button::Button(uint8_t _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window) {
+Button::Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window) {
   polarity = _polarity;
   button_pin = _button_pin;
   samplerate = _samplerate * 1000;
@@ -25,11 +25,12 @@ void Button::update() {
   if (stopwatch >= samplerate) {
     stopwatch = 0;
     history = (history & 0b10000000000000000000000000000000) | ((history & 0b00111111111111111111111111111111) << 1) | read();
+    // for (int j = 31; j >= 0; j--) {Serial.print(bitRead(history, j));} Serial.println();
   }
 }
 
-uint32_t inline Button::read() {
-  uint32_t state = 0;
+int inline Button::read() {
+  int state = 0;
 #if defined (__arm__) && defined (CORE_TEENSY) // digitalReadFast on teensy
   state = digitalReadFast(button_pin);
 #else
