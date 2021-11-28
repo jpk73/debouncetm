@@ -24,9 +24,9 @@ class Button {
     int button_pin;
     byte pin_mode;
     bool polarity;
-    int samplerate;
-    int longpress_duration;
-    int doubleclick_window;
+    uint32_t samplerate;
+    uint32_t longpress_duration;
+    uint32_t doubleclick_window;
     int history;
     int counter;
     elapsedMicros stopwatch;
