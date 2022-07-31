@@ -27,7 +27,7 @@ class Button {
     uint32_t samplerate;
     uint32_t longpress_duration;
     uint32_t doubleclick_window;
-    int history;
+    uint32_t history;
     int counter;
     elapsedMicros stopwatch;
     elapsedMicros stopwatch_pressed;
