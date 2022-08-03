@@ -9,7 +9,8 @@
 class Button {
 
   public:
-    Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window);
+    Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window);                       // 16bit history
+    Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window, int _history_length); // 0 = 8bit, 1 = 32bit history
     void update();
     bool pressed();
     bool released();
@@ -24,10 +25,12 @@ class Button {
     int button_pin;
     byte pin_mode;
     bool polarity;
-    uint32_t samplerate;
-    uint32_t longpress_duration;
-    uint32_t doubleclick_window;
-    uint32_t history;
+    int samplerate;
+    int longpress_duration;
+    int doubleclick_window;
+    uint8_t history_8 = 0;
+    uint16_t history = 0;
+    uint32_t history_32 = 0;
     int counter;
     elapsedMicros stopwatch;
     elapsedMicros stopwatch_pressed;
@@ -36,6 +39,7 @@ class Button {
     bool pressed_flag;
     bool clicked_flag;
     bool doubleclick_flag;
+    int history_length;
 };
 
 #endif
