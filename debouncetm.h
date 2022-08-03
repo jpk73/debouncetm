@@ -9,7 +9,7 @@
 class Button {
 
   public:
-    Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window);                       // 16bit history
+    Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window);                      // 16bit history
     Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerate, float _longpress_duration, float _doubleclick_window, int _history_length); // 0 = 8bit, 1 = 32bit history
     void update();
     bool pressed();
