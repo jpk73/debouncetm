@@ -8,7 +8,7 @@ Button::Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerat
   polarity = _polarity;
   button_pin = _button_pin;
   samplerate = _samplerate * 1000;
-  longpress_duration = _longpress_duration * 1000000;
+  longpress_duration = _longpress_duration * 1000;
   doubleclick_window = _doubleclick_window * 1000;
   history_length = 16;
   history = 0b1111111111111111;
@@ -26,7 +26,7 @@ Button::Button(int _button_pin, byte _pin_mode, bool _polarity, float _samplerat
   polarity = _polarity;
   button_pin = _button_pin;
   samplerate = _samplerate * 1000;
-  longpress_duration = _longpress_duration * 1000000;
+  longpress_duration = _longpress_duration * 1000;
   doubleclick_window = _doubleclick_window * 1000;
   if (_history_length == 8) {history_length = 8; history_8 = 0b11111111;}
   else if (_history_length == 32) {history_length = 32; history_32 = 0b11111111111111111111111111111111;}
@@ -113,7 +113,7 @@ bool Button::released() {
 bool Button::longpressed() {
   bool pressed = 0;
   if (pressed_flag == 0) stopwatch_pressed = 0;
-  else if (stopwatch_pressed >= longpress_duration) {
+  else if (stopwatch_pressed / 1000 >= longpress_duration) {
     pressed = 1;
     pressed_flag = 0;
     stopwatch_pressed = 0;
@@ -123,7 +123,7 @@ bool Button::longpressed() {
 
 bool Button::clicked() {
   bool clicked = 0;
-  if (stopwatch_pressed < longpress_duration) {
+  if (stopwatch_pressed / 1000 < longpress_duration) {
     clicked = clicked_flag;
     clicked_flag = 0;
     if (doubleclick_flag && clicked) {
