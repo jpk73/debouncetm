@@ -18,9 +18,9 @@ void setup() {Serial.begin(115200);}
 void loop() {
   button1.update();
   if (button1.pressed()) Serial.println("pressed");               // returns true only if called after update()
+  if (button1.longpressed()) Serial.println("longpressed");       // returns true only if called after pressed()
   if (button1.released()) Serial.println("released");             // returns true only if called after pressed()
-  if (button1.longpressed()) Serial.println("longpressed");       // returns true only if called after released()
-  if (button1.clicked()) Serial.println("clicked");               // returns true only if called after longpressed()
+  if (button1.clicked()) Serial.println("clicked");               // returns true only if called after released()
   if (button1.doubleclicked()) Serial.println("doubleclicked");   // returns true only if called after clicked()
 
   unsigned long currentMillis = millis();
